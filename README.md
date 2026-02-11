@@ -1,6 +1,7 @@
 1. Меняем /home/persay/app/db/session.py
 
-2. Ставим драйвер psycopg2
+
+2. Ставим драйвер psycopg2:
 ```
 apt update
 apt install -y python3-dev build-essential libpq-dev python3-wheel
@@ -9,7 +10,8 @@ apt install -y python3-dev build-essential libpq-dev python3-wheel
 /home/persay/venv/bin/pip install psycopg2-binary
 ```
 
-3. Поднимаем PostgreSQL
+
+3. Поднимаем PostgreSQL:
 ```
 sudo apt install postgresql
 sudo -u postgres psql
@@ -21,7 +23,53 @@ GRANT ALL PRIVILEGES ON DATABASE persaydb TO user;
 ```
 где persaydb - имя базы; user, password -имя и пароль пользователя PostgreSQL
 
-В веб-интерфейсе PERSAY прописываем путь к БД:
+
+4. В веб-интерфейсе PERSAY прописываем путь к БД:
 ```db.url
 postgresql+psycopg2://user:password@localhost:5432/persaydb
 ```
+
+
+5. Настраиваем внешний доступ к БД:
+Разрешаем PostgreSQL слушать сеть
+```
+sudo nano /etc/postgresql/*/main/postgresql.conf
+```
+меняем:
+```
+listen_addresses = 'localhost'
+```
+   на
+```
+   listen_addresses = '*'
+```
+где * можно заменить на конкретный ip адрес, которому разрешен доступ к БД
+
+
+Затем разрешаем доступ пользователю по сети
+```
+sudo nano /etc/postgresql/*/main/pg_hba.conf
+```
+в самый конец добавляем строку:
+```
+host all all 0.0.0.0/0 md5
+```
+или более безопасно:
+```
+host    persaydb    user    192.168.1.0/24    md5
+```
+
+Перезапускаем PostgreSQL
+```
+sudo systemctl restart postgresql
+```
+
+И подключаемся с другого ПК через pgAdmin.
+
+
+
+
+
+
+
+   
