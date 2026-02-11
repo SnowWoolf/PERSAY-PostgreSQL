@@ -1,50 +1,61 @@
 from __future__ import annotations
 
-from typing import Generator
+from typing import Generator, Optional
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 
 from app.core.config import settings
 from app.db.models import Base
 
 
-# ─────────────────────────────────────────────────────────────
-# ENGINE
-# ─────────────────────────────────────────────────────────────
-engine = create_engine(
-    settings.db_url,               # postgresql+psycopg2://...
-    future=True,
-    pool_pre_ping=True,            # убирает зависшие коннекты
-    pool_size=10,
-    max_overflow=20,
-)
+_engine = None
+_SessionLocal: Optional[sessionmaker] = None
 
 
 # ─────────────────────────────────────────────────────────────
-# SESSION FACTORY
+# INIT ENGINE (вызывается после load_yaml_config)
 # ─────────────────────────────────────────────────────────────
-SessionLocal = sessionmaker(
-    autocommit=False,
-    autoflush=False,
-    bind=engine,
-    future=True,
-)
+def init_engine() -> None:
+    global _engine, _SessionLocal
+
+    if _engine is not None:
+        return
+
+    db_url = settings.db_url
+
+    if db_url.startswith("sqlite"):
+        raise RuntimeError("SQLite запрещён. Ожидается PostgreSQL.")
+
+    _engine = create_engine(
+        db_url,
+        future=True,
+        pool_pre_ping=True,
+        pool_size=10,
+        max_overflow=20,
+    )
+
+    _SessionLocal = sessionmaker(
+        autocommit=False,
+        autoflush=False,
+        bind=_engine,
+        future=True,
+    )
 
 
-# ─────────────────────────────────────────────────────────────
-# INIT DB
-# вызывается из main.py на startup
 # ─────────────────────────────────────────────────────────────
 def init_db() -> None:
-    Base.metadata.create_all(bind=engine)
+    if _engine is None:
+        raise RuntimeError("Engine не инициализирован")
+    Base.metadata.create_all(bind=_engine)
 
 
 # ─────────────────────────────────────────────────────────────
-# DEPENDENCY
-# ─────────────────────────────────────────────────────────────
-def get_db() -> Generator:
-    db = SessionLocal()
+def get_db() -> Generator[Session, None, None]:
+    if _SessionLocal is None:
+        raise RuntimeError("SessionLocal не инициализирован")
+
+    db = _SessionLocal()
     try:
         yield db
     finally:
