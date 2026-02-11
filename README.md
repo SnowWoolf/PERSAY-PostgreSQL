@@ -24,10 +24,17 @@ GRANT ALL PRIVILEGES ON DATABASE persaydb TO user;
 где persaydb - имя базы; user, password -имя и пароль пользователя PostgreSQL
 
 
+4. Перезапускаем сервис
+```
+systemctl restart persay
+```
+
+
 4. В веб-интерфейсе PERSAY прописываем путь к БД:
 ```db.url
 postgresql+psycopg2://user:password@localhost:5432/persaydb
 ```
+и перезапускаем сервис (можно кнопкой в веб-интерфейсе)
 
 
 5. Настраиваем внешний доступ к БД:
