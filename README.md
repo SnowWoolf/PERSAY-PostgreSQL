@@ -30,14 +30,14 @@ systemctl restart persay
 ```
 
 
-4. В веб-интерфейсе PERSAY прописываем путь к БД:
+5. В веб-интерфейсе PERSAY прописываем путь к БД:
 ```db.url
 postgresql+psycopg2://user:password@localhost:5432/persaydb
 ```
 и перезапускаем сервис (можно кнопкой в веб-интерфейсе)
 
 
-5. Настраиваем внешний доступ к БД:
+6. Настраиваем внешний доступ к БД:
 Разрешаем PostgreSQL слушать сеть
 ```
 sudo nano /etc/postgresql/*/main/postgresql.conf
