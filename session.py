@@ -1,3 +1,4 @@
+# app/db/session.py
 from __future__ import annotations
 
 from typing import Generator, Optional
@@ -60,3 +61,4 @@ def get_db() -> Generator[Session, None, None]:
         yield db
     finally:
         db.close()
+
