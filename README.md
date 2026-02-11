@@ -38,6 +38,7 @@ postgresql+psycopg2://user:password@localhost:5432/persaydb
 
 
 6. Настраиваем внешний доступ к БД:
+   
 Разрешаем PostgreSQL слушать сеть
 ```
 sudo nano /etc/postgresql/*/main/postgresql.conf
