@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Generator
 
 from sqlalchemy import create_engine
@@ -10,28 +9,21 @@ from app.core.config import settings
 from app.db.models import Base
 
 
-def _ensure_sqlite_dir(db_url: str) -> None:
-    if db_url.startswith("sqlite"):
-        prefix = "sqlite:///"
-        if db_url.startswith(prefix):
-            fs_path = db_url[len(prefix):]
-
-            if fs_path == ":memory:":
-                return
-
-            d = Path(fs_path).resolve().parent
-            d.mkdir(parents=True, exist_ok=True)
-
-
-db_url = settings.db_url
-_ensure_sqlite_dir(db_url)
-
+# ─────────────────────────────────────────────────────────────
+# ENGINE
+# ─────────────────────────────────────────────────────────────
 engine = create_engine(
-    db_url,
+    settings.db_url,               # postgresql+psycopg2://...
     future=True,
-    pool_pre_ping=True,
+    pool_pre_ping=True,            # убирает зависшие коннекты
+    pool_size=10,
+    max_overflow=20,
 )
 
+
+# ─────────────────────────────────────────────────────────────
+# SESSION FACTORY
+# ─────────────────────────────────────────────────────────────
 SessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False,
@@ -40,10 +32,17 @@ SessionLocal = sessionmaker(
 )
 
 
+# ─────────────────────────────────────────────────────────────
+# INIT DB
+# вызывается из main.py на startup
+# ─────────────────────────────────────────────────────────────
 def init_db() -> None:
     Base.metadata.create_all(bind=engine)
 
 
+# ─────────────────────────────────────────────────────────────
+# DEPENDENCY
+# ─────────────────────────────────────────────────────────────
 def get_db() -> Generator:
     db = SessionLocal()
     try:
