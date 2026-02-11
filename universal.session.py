@@ -1,5 +1,5 @@
 # app/db/session.py
-# Для работы с SQLite и PostgreSQL (не протестирован!!)
+# Для работы с SQLite и PostgreSQL
 from __future__ import annotations
 
 from typing import Generator
