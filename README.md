@@ -1,4 +1,4 @@
-## 1. Меняем /home/persay/app/db/session.py и /home/persay/app/main.py
+### 1. Меняем /home/persay/app/db/session.py и /home/persay/app/main.py
 
 
 ## 2. Ставим драйвер psycopg2:
