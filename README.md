@@ -52,7 +52,7 @@ listen_addresses = 'localhost'
 ```
    на
 ```
-   listen_addresses = '*'
+listen_addresses = '*'
 ```
 где * можно заменить на конкретный ip адрес, которому разрешен доступ к БД
 
