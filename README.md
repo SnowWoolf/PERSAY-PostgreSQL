@@ -79,7 +79,9 @@ sudo systemctl restart postgresql
 
 Узнать размер БД через pgAdmin:
 В консоли PSQL Tool Workspace выполнить
-`SELECT pg_size_pretty(pg_database_size(current_database()));`
+```
+SELECT pg_size_pretty(pg_database_size(current_database()));
+```
 
 
 
