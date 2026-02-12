@@ -11,7 +11,7 @@ from app.db.session import init_db, init_engine
 ```
 settings.load_yaml_config()
 ```
-добавляем строку:
+после строки 175 добавляем строку:
 ```
 settings.load_yaml_config()
 init_engine()
